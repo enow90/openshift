@@ -79,3 +79,34 @@ spec:
               cpu: "2000m"
           ports:
             - containerPort: 3306
+          volumeMounts:
+            name: volume-mariadb
+            mountPath: /var/lib/mysql/
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv0002
+spec:
+  capacity:
+    storage: 100Gi   # Informativo
+  hostPath:
+    path: /mnt/pv-data/pv0002
+
+  accessModes:
+    - ReadWriteOnce
+    - ReadWriteMany
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Recycle
+  volumeMode: Filesystem
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: volume-mariadb
+spec:
+  resources:
+    requests:
+      storage: 150Gi  
+  accessModes:
+    - ReadWriteOnce
