@@ -48,6 +48,10 @@ spec:
       labels:
         app: mariadb
     spec:
+      volumes:
+        - name: volume-mariadb
+          PersistentVolumeClaim:
+            claimName: volume-mariadb
       containers:
         - name: mariadb
           image: mariadb
