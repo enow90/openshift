@@ -111,6 +111,6 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 150Gi  
+      storage: 80Gi  
   accessModes:
     - ReadWriteOnce
