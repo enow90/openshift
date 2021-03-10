@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: mariadb-tst
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mariadb-tst
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb
+          env:
+            # Define the environment variable
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mariadb-config
+                  key: MYSQL_DATABASE
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: MYSQL_PASSWORD
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "2000m"
+          ports:
+            - containerPort: 3306
+			
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: mariadb-secret
+  namespace: default
+data:
+  MYSQL_PASSWORD: bWFyaWFkYg==
+  MYSQL_USER: bWFyaWFkYg==
+  MYSQL_ROOT_PASSWORD: bWFyaWFkYg==
+
+type: Opaque
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mariadb-config
+  namespace: default
+data:
+  MYSQL_DATABASE: mariadb
+
