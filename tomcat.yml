@@ -1,0 +1,128 @@
+
+kind: Secret
+apiVersion: v1
+metadata:
+    name: secretos-tomcat  
+    labels:
+        app: tomcat   
+data:
+  MYSQL_ROOT_PASSWORD: cGFzc3dvcmQx
+  MYSQL_USER: bWl1c3Vhcmlv
+  MYSQL_PASSWORD: cGFzc3dvcmQy
+---
+
+#MariaDB: Pod   >>>    Deployment  (1)
+#    Congigurarlo:
+#        ConfigMap <<< Nombre de la BBDD
+#        Secret    <<< Usuario/Password
+#kind: Pod
+#apiVersion: v1
+#metadata:
+#    name: pod-mariadb  
+#    labels: 
+#        app: mariadb
+#    namespace: pruebas NO LO VOY A HACER. Lo hago desde linea de comandos... Así es más flexible
+#spec:
+#    containers:
+#        -   name: contenedor-mariadb
+#            image: mariadb:latest 
+#            ports:
+#              - containerPort: 3306
+#            env:
+#              - name: MYSQL_ROOT_PASSWORD
+#                valueFrom:
+#                  secretKeyRef:
+#                    name: secretos-mariadb
+#                    key: MYSQL_ROOT_PASSWORD
+#              - name: MYSQL_DATABASE
+#                valueFrom:
+#                  configMapKeyRef:
+#                    name: configuracion-mariadb
+#                    key: MYSQL_DATABASE
+#              - name: MYSQL_USER
+#                valueFrom:
+#                  secretKeyRef:
+#                    name: secretos-mariadb
+#                    key: MYSQL_USER
+#              - name: MYSQL_PASSWORD
+#                valueFrom:
+#                  secretKeyRef:
+#                    name: secretos-mariadb
+#                    key: MYSQL_PASSWORD
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: peticion-volumen-tomcat
+spec:
+  resources:
+    requests:
+      storage: 50Gi  
+  accessModes:
+    # - ReadWriteOnce
+    - ReadWriteMany
+    
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+    name: deployment-mariadb  
+    labels: 
+        app: mariadb
+spec:
+    replicas: 1
+    selector: 
+        matchLabels:
+            app: tomcat
+    template:
+          metadata:
+              labels: 
+                  app: tomcat
+          spec: 
+            volumes:
+              - name: almacenamiento-tomcat
+                persistentVolumeClaim: 
+                  claimName: peticion-volumen-tomcat
+            containers:
+              -   name: contenedor-tomcat
+                  image: bitnami/tomcat:latest
+                  ports:
+                    - containerPort: 3306
+                  volumeMounts:
+                    - name: almacenamiento-tomcat
+                      mountPath: /opt/bitnami/tomcat/conf
+                  env:
+                    - name: MYSQL_ROOT_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          name: secretos-tomcat
+                          key: MYSQL_ROOT_PASSWORD
+                    - name: MYSQL_USER
+                      valueFrom:
+                        secretKeyRef:
+                          name: secretos-tomcat
+                          key: MYSQL_USER
+                    - name: MYSQL_PASSWORD
+                      valueFrom:
+                        secretKeyRef:
+                          name: secretos-tomcat
+                          key: MYSQL_PASSWORD
+                  resources:
+                    requests:
+                      cpu: "1"         
+                      memory: 1Gi
+                          
+
+
+
+
+
+
+
+#Tomcat: Deployment    (2)
+#    SECRET :
+#        fichero configuracion: Usuarios/Contraseñas
+#        tomcat-users.xml <<<- usuario/contraseña 
+
+#Volumenes: 
+#    MariaDB: Volumen Persistente$ 
