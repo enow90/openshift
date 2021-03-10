@@ -85,7 +85,7 @@ spec:
             - containerPort: 3306
           volumeMounts:
             name: volume-mariadb
-            mountPath: /var/lib/mysql/
+            mountPath: /var/lib/mysql
 ---
 kind: PersistentVolume
 apiVersion: v1
