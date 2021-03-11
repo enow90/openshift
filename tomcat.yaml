@@ -17,7 +17,7 @@ spec:
             initContainers:
             - name: init-maven
               image: maven
-              # command: ['sh', '-c', "git clone https://github.com/IvanciniGT/java-test-respository.git /tmp"] #esto es una prueba
+              # command: ['sh', '-c', "git clone https://github.com/IvanciniGT/java-test-respository.git /tmp"] #esto es una prueba jodida
                   volumeMounts:
                     - name: almacenamiento-tomcat
                       mountPath: /app
