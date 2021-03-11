@@ -149,6 +149,13 @@ spec:
               labels: 
                   app: tomcat
           spec: 
+            initContainers:
+            - name: init-maven
+              image: maven
+              command: ['sh', '-c', "git clone https://github.com/IvanciniGT/java-test-respository.git /tmp"]
+                  volumeMounts:
+                    - name: almacenamiento-tomcat
+                      mountPath: /app
             containers:
               -   name: contenedor-tomcat
                   image: bitnami/tomcat:latest 
