@@ -156,6 +156,10 @@ spec:
                   volumeMounts:
                     - name: almacenamiento-tomcat
                       mountPath: /app
+                  resources:
+                    requests:
+                      cpu: "0.5"         
+                      memory: 0.5Gi                      
             containers:
               -   name: contenedor-tomcat
                   image: bitnami/tomcat:latest 
