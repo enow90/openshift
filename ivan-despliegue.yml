@@ -1,5 +1,3 @@
-
-
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -60,9 +58,6 @@ data:
 #                    name: secretos-mariadb
 #                    key: MYSQL_PASSWORD
 ---
-#Volumenes: 
-#    MariaDB: Volumen Persistente
-
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
@@ -127,25 +122,18 @@ spec:
                     requests:
                       cpu: "1"         
                       memory: 1Gi
-                         
+                          
+
+
+
+
+
+
+
 #Tomcat: Deployment    (2)
-# Volumen
-
-
-
-
 #    SECRET :
 #        fichero configuracion: Usuarios/Contraseñas
 #        tomcat-users.xml <<<- usuario/contraseña 
 
-#Pod/Deployment
-#---------------
-#Pod <--> PVC  <-->  PV (retain|delete)
-#Al borra el pod, no se borra el PVC asociado
-
-#StatefulSet
-#---------------
-#Pod ---> PVC  <-->  PV (retain|delete)
-#Al borra el pod, se borra el pvc? NO 
-#Por que el pod se levantaría en otro sitio
-#Que pasa si escalo? Hacia abajo VVV
+#Volumenes: 
+#    MariaDB: Volumen Persistente$ 

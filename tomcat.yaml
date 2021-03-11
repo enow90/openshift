@@ -1,0 +1,49 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+    name: statefulset-tomcat  
+    labels: 
+        app: tomcat
+spec:
+    replicas: 2
+    selector: 
+        matchLabels:
+            app: tomcat
+    template:
+          metadata:
+              labels: 
+                  app: tomcat
+          spec: 
+            initContainers:
+            - name: init-maven
+              image: maven
+              # command: ['sh', '-c', "git clone https://github.com/IvanciniGT/java-test-respository.git /tmp"]
+                  volumeMounts:
+                    - name: almacenamiento-tomcat
+                      mountPath: /app
+                  resources:
+                    requests:
+                      cpu: "0.5"         
+                      memory: 0.5Gi                      
+            containers:
+              -   name: contenedor-tomcat
+                  image: bitnami/tomcat:latest 
+                  resources:
+                    requests:
+                      cpu: "0.5"         
+                      memory: 0.5Gi
+                  ports:
+                    - containerPort: 8080
+                  volumeMounts:
+                    - name: almacenamiento-tomcat
+                      mountPath: /carpeta
+    volumeClaimTemplates:
+      - metadata:
+          name: almacenamiento-tomcat
+        spec:
+          resources:
+            requests:
+              storage: 50Gi  
+          storageClassName: discos-ssd-cloud
+          accessModes:
+            - ReadWriteOnce
